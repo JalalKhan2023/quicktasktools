@@ -2,20 +2,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickTaskTools - Free Online Tools</title>
-  <meta name="description" content="Free online tools for image compression, PDF documents and everyday tasks.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickTaskTools – Free Online Image Tools</title>
+<meta name="description" content="Compress images to a smaller file size with our free online image compressor. Fast, private and easy to use.">
+<meta name="theme-color" content="#ffffff">
+<style>
+:root {
+  --primary:#2457e6;
+  --dark:#17233c;
+  --muted:#667085;
+  --border:#e5e9f2;
+  --bg:#f7f9fc;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:#fff}
+header{border-bottom:1px solid var(--border);background:white}
+nav{max-width:1120px;margin:auto;padding:19px 22px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.7px}
+.logo span{color:var(--primary)}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;margin-left:22px}
+.hero{background:linear-gradient(135deg,#eff4ff,#f8faff);text-align:center;padding:65px 20px 55px}
+.hero h1{font-size:clamp(32px,5vw,48px);margin:0 0 15px;letter-spacing:-1.5px}
+.hero p{color:var(--muted);font-size:17px;line-height:1.6;max-width:650px;margin:auto}
+.container{max-width:1000px;margin:auto;padding:42px 20px}
+.section-title{text-align:center;margin-bottom:28px}
+.section-title h2{font-size:27px;margin:0 0 9px}
+.section-title p{color:var(--muted);margin:0}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.tool{border:1px solid var(--border);border-radius:13px;padding:22px 16px;background:white}
+.tool .symbol{font-size:28px;margin-bottom:12px}
+.tool h3{font-size:16px;margin:0 0 8px}
+.tool p{font-size:13px;color:var(--muted);line-height:1.5;margin:0}
+.tool.active{border-color:#a9bdfd;background:#f7f9ff}
+.compressor{max-width:700px;margin:0 auto;background:white;border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:0 8px 35px #1b31500d}
+.upload{border:2px dashed #b8c6e8;border-radius:13px;padding:35px 15px;text-align:center;background:#f9fbff;cursor:pointer}
+.upload:hover{border-color:var(--primary)}
+.upload strong{display:block;margin:10px 0}
+.upload small{color:var(--muted)}
+input[type=file]{display:none}
+label{display:block;font-size:14px;font-weight:700;margin:19px 0 8px}
+input[type=number],select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px}
+button{border:0;border-radius:9px;padding:13px 20px;font-size:15px;font-weight:700;cursor:pointer}
+.primary{background:var(--primary);color:white;width:100%;margin-top:20px}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.secondary{background:#edf1fa;color:var(--dark);margin-top:12px}
+.preview{display:none;margin-top:20px;text-align:center}
+.preview img{max-width:100%;max-height:250px;border-radius:10px}
+.status{margin-top:16px;padding:13px;border-radius:9px;background:#f0f5ff;color:#2448a3;font-size:14px;display:none;line-height:1.5}
+.result{display:none;margin-top:20px;padding:18px;background:#effaf3;border-radius:10px}
+.result strong{color:#13733b}
+.download{display:block;text-align:center;text-decoration:none;background:#137b48;color:white;padding:13px;border-radius:9px;margin-top:14px;font-weight:bold}
+.privacy{text-align:center;font-size:13px;color:var(--muted);margin-top:17px}
+.info{background:var(--bg);padding:42px 20px}
+.info-inner{max-width:850px;margin:auto;line-height:1.7}
+.info h2{font-size:23px}
+.info p,.info li{color:#536078;font-size:15px}
+footer{text-align:center;padding:28px 15px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)}
+footer a{color:var(--muted);margin:0 8px}
+@media(max-width:750px){.tools{grid-template-columns:repeat(2,1fr)}nav{padding:16px}.hero{padding:48px 18px}.compressor{padding:19px}}
+@media(max-width:390px){.tools{grid-template-columns:1fr}nav a{margin-left:9px}}
+</style>
 </head>
 <body>
-  <h1>Welcome to QuickTaskTools</h1>
-  <p>Free online tools for everyday tasks.</p>
-  <h2>Our Tools</h2>
-  <ul>
-    <li>Image Compressor</li>
-    <li>Exact KB Image Resizer</li>
-    <li>Passport Photo Maker</li>
-    <li>PDF Compressor</li>
-  </ul>
+
+<header>
+<nav>
+  <div class="logo">QuickTask<span>Tools</span></div>
+  <div>
+    <a href="#tools">Tools</a>
+    <a href="#compressor">Image Compressor</a>
+  </div>
+</nav>
+</header>
+
+<section class="hero">
+  <h1>Simple tools. Faster tasks.</h1>
+  <p>Free online tools to make everyday tasks easier. Compress images, prepare documents and get things done in seconds.</p>
+</section>
+
+<main>
+<section class="container" id="tools">
+  <div class="section-title">
+    <h2>Explore Our Free Tools</h2>
+    <p>Useful tools, simple to use, no registration required.</p>
+  </div>
+  <div class="tools">
+    <div class="tool active">
+      <div class="symbol">🖼️</div>
+      <h3>Image Compressor</h3>
+      <p>Reduce image file size while maintaining quality.</p>
+    </div>
+    <div class="tool">
+      <div class="symbol">📏</div>
+      <h3>KB Image Resizer</h3>
+      <p>Prepare images for specific upload size limits.</p>
+    </div>
+    <div class="tool">
+      <div class="symbol">📷</div>
+      <h3>Passport Photo</h3>
+      <p>Prepare and resize photos for applications.</p>
+    </div>
+    <div class="tool">
+      <div class="symbol">📄</div>
+      <h3>PDF Tools</h3>
+      <p>Document utilities coming soon.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container" id="compressor">
+  <div class="section-title">
+    <h2>Free Image Compressor</h2>
+    <p>Compress your image directly in your browser.</p>
+  </div>
+
+  <div class="compressor">
+    <label for="file" style="margin-top:0">Select your image</label>
+    <div class="upload" id="dropzone">
+      <div style="font-size:36px">☁️</div>
+      <strong>Click to upload or drop an image here</strong>
+      <small>JPG, PNG or WebP supported</small>
+    </div>
+    <input type="file" id="file" accept="image/jpeg,image/png,image/webp">
+
+    <div class="preview" id="preview">
+      <img id="originalImage" alt="Original image preview">
+      <p id="originalInfo" style="font-size:13px;color:#667085"></p>
+    </div>
+
+    <label for="target">Target file size (KB)</label>
+    <input type="number" id="target" min="5" max="10000" value="100">
+    <small style="color:#667085;display:block;margin-top:7px">Choose a target between 5 KB and 10,000 KB.</small>
+
+    <button class="primary" id="compress" disabled>Compress Image</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+
+    <div class="result" id="result">
+      <strong>Compression completed!</strong>
+      <p id="resultInfo"></p>
+      <a id="download" class="download" download="quicktasktools-compressed.jpg">Download Compressed Image</a>
+    </div>
+
+    <p class="privacy">🔒 Your image is processed locally in your browser. It is not uploaded to our server.</p>
+  </div>
+</section>
+
+<section class="info">
+<div class="info-inner">
+  <h2>How to compress an image online</h2>
+  <p>Our free image compressor helps reduce the file size of your photographs for online forms, applications, websites and email attachments.</p>
+  <ol>
+    <li>Select an image from your device.</li>
+    <li>Enter your desired maximum file size in KB.</li>
+    <li>Click Compress Image.</li>
+    <li>Download your compressed JPG image.</li>
+  </ol>
+  <h2>Is my image private?</h2>
+  <p>Yes. Image processing takes place locally in your browser using the Canvas API. Your selected image is not sent to our server.</p>
+  <p><strong>Note:</strong> The tool exports images as JPEG. Transparency in PNG images will be replaced with a white background. Exact file-size matching is not always possible for every image; results may be slightly above the target in difficult cases.</p>
+</div>
+</section>
+</main>
+
+<footer>
+  <p>© 2026 QuickTaskTools. Free online tools for everyone.</p>
+  <a href="mailto:contact@quicktasktools.com">Contact</a>
+  <a href="#tools">Our Tools</a>
+</footer>
+
+<script>
+const fileInput = document.getElementById('file');
+const dropzone = document.getElementById('dropzone');
+const compressButton = document.getElementById('compress');
+const targetInput = document.getElementById('target');
+const preview = document.getElementById('preview');
+const originalImage = document.getElementById('originalImage');
+const statusBox = document.getElementById('status');
+const resultBox = document.getElementById('result');
+
+let selectedFile = null;
+let image = new Image();
+let originalURL = null;
+let downloadURL = null;
+
+dropzone.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('dragover', event => {
+  event.preventDefault();
+  dropzone.style.borderColor = '#2457e6';
+});
+
+dropzone.addEventListener('dragleave', () => {
+  dropzone.style.borderColor = '#b8c6e8';
+});
+
+dropzone.addEventListener('drop', event => {
+  event.preventDefault();
+  dropzone.style.borderColor = '#b8c6e8';
+  if (event.dataTransfer.files.length) loadFile(event.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) loadFile(fileInput.files[0]);
+});
+
+function loadFile(file) {
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+    alert('Please select a JPG, PNG or WebP image.');
+    return;
+  }
+
+  if (file.size > 20 * 1024 * 1024) {
+    alert('Please select an image smaller than 20 MB.');
+    return;
+  }
+
+  selectedFile = file;
+  if (originalURL) URL.revokeObjectURL(originalURL);
+  originalURL = URL.createObjectURL(file);
+  image = new Image();
+
+  image.onload = () => {
+    originalImage.src = originalURL;
+    preview.style.display = 'block';
+    document.getElementById('originalInfo').textContent =
+      image.width + ' × ' + image.height + ' pixels | ' + formatSize(file.size);
+    compressButton.disabled = false;
+    resultBox.style.display = 'none';
+    statusBox.style.display = 'none';
+  };
+
+  image.onerror = () => {
+    alert('This image could not be opened.');
+  };
+
+  image.src = originalURL;
+}
+
+function formatSize(bytes) {
+  return bytes < 1024 * 1024
+    ? (bytes / 1024).toFixed(1) + ' KB'
+    : (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function canvasBlob(canvas, quality) {
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+}
+
+compressButton.addEventListener('click', async () => {
+  if (!selectedFile || !image.complete || !image.naturalWidth) return;
+
+  const targetKB = Number(targetInput.value);
+
+  if (!Number.isFinite(targetKB) || targetKB < 5 || targetKB > 10000) {
+    alert('Enter a target between 5 and 10,000 KB.');
+    return;
+  }
+
+  compressButton.disabled = true;
+  resultBox.style.display = 'none';
+  statusBox.style.display = 'block';
+  statusBox.textContent = 'Compressing your image...';
+
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0);
+
+    const targetBytes = targetKB * 1024;
+    let low = 0.05;
+    let high = 0.95;
+    let best = null;
+
+    for (let i = 0; i < 9; i++) {
+      const quality = (low + high) / 2;
+      const blob = await canvasBlob(canvas, quality);
+
+      if (!blob) throw new Error('Could not process this image.');
+
+      if (blob.size <= targetBytes) {
+        best = blob;
+        low = quality;
+      } else {
+        high = quality;
+      }
+    }
+
+    if (!best) {
+      best = await canvasBlob(canvas, 0.05);
+    }
+
+    if (downloadURL) URL.revokeObjectURL(downloadURL);
+    downloadURL = URL.createObjectURL(best);
+
+    document.getElementById('download').href = downloadURL;
+    document.getElementById('resultInfo').textContent =
+      'Original: ' + formatSize(selectedFile.size) +
+      ' | Compressed: ' + formatSize(best.size) +
+      ' | Dimensions: ' + canvas.width + ' × ' + canvas.height;
+
+    const success = best.size <= targetBytes;
+    statusBox.textContent = success
+      ? 'Your image meets the requested file-size limit.'
+      : 'The smallest tested image is still above your target. Try reducing the image dimensions for a smaller file.';
+
+    resultBox.style.display = 'block';
+  } catch (error) {
+    statusBox.textContent = 'Error: ' + error.message;
+  } finally {
+    compressButton.disabled = false;
+  }
+});
+</script>
 </body>
 </html>
