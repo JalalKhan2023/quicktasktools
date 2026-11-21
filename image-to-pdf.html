@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image to PDF Converter - QuickTaskTools</title>
+<meta name="description" content="Convert multiple JPG and PNG images into a single PDF document for free.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7fb;
+  color:#243047;
+}
+header{
+  background:#1769d2;
+  color:white;
+  padding:22px 15px;
+  text-align:center;
+}
+header h1{margin:0;font-size:26px}
+header p{margin:8px 0 0}
+.container{
+  max-width:850px;
+  margin:30px auto;
+  padding:20px;
+}
+.panel{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 3px 15px rgba(0,0,0,.07);
+  margin-bottom:20px;
+}
+label{
+  display:block;
+  font-weight:bold;
+  margin:16px 0 7px;
+}
+input,select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd5e2;
+  border-radius:7px;
+  font-size:15px;
+}
+.upload{
+  border:2px dashed #1769d2;
+  border-radius:10px;
+  padding:30px 15px;
+  text-align:center;
+  background:#f7faff;
+}
+button{
+  border:0;
+  border-radius:7px;
+  padding:12px 20px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:bold;
+}
+.primary{
+  background:#1769d2;
+  color:white;
+  width:100%;
+  margin-top:22px;
+}
+.secondary{
+  background:#e8eef7;
+  color:#243047;
+  margin-top:12px;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.preview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+  gap:12px;
+  margin-top:20px;
+}
+.preview-item{
+  border:1px solid #dce3ed;
+  border-radius:8px;
+  padding:8px;
+  text-align:center;
+  overflow:hidden;
+}
+.preview-item img{
+  width:100%;
+  height:110px;
+  object-fit:contain;
+}
+.preview-item p{
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+.hint{color:#68758a;font-size:13px}
+#status{margin-top:15px;text-align:center;font-weight:bold}
+footer{text-align:center;padding:25px;color:#68758a}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Image to PDF Converter</h1>
+  <p>Convert your images into a PDF document for free</p>
+</header>
+
+<main class="container">
+
+<section class="panel">
+
+<h2>Upload Images</h2>
+<p class="hint">Select one or multiple JPG, JPEG or PNG images.</p>
+
+<div class="upload">
+  <input type="file" id="imageInput" accept="image/jpeg,image/png" multiple>
+</div>
+
+<div id="previewGrid" class="preview-grid"></div>
+
+<button type="button" class="secondary" id="clearButton">
+  Clear Images
+</button>
+
+</section>
+
+<section class="panel">
+
+<h2>PDF Settings</h2>
+
+<label for="pageSize">Page Size</label>
+<select id="pageSize">
+  <option value="a4">A4</option>
+  <option value="a5">A5</option>
+  <option value="letter">Letter</option>
+  <option value="fit">Fit to Image</option>
+</select>
+
+<label for="orientation">Page Orientation</label>
+<select id="orientation">
+  <option value="portrait">Portrait</option>
+  <option value="landscape">Landscape</option>
+</select>
+
+<label for="margin">Page Margin (mm)</label>
+<select id="margin">
+  <option value="0">No Margin</option>
+  <option value="5" selected>5 mm</option>
+  <option value="10">10 mm</option>
+  <option value="15">15 mm</option>
+  <option value="20">20 mm</option>
+</select>
+
+<p class="hint">
+  Each uploaded image will be placed on a separate PDF page.
+</p>
+
+<button type="button" class="primary" id="convertButton">
+  Convert Images to PDF
+</button>
+
+<div id="status" aria-live="polite"></div>
+
+</section>
+
+</main>
+
+<footer>
+  © 2026 QuickTaskTools. Free Online Tools.
+</footer>
+
+<script>
+const imageInput = document.getElementById('imageInput');
+const previewGrid = document.getElementById('previewGrid');
+const convertButton = document.getElementById('convertButton');
+const status = document.getElementById('status');
+
+let selectedImages = [];
+
+imageInput.addEventListener('change', () => {
+  const files = Array.from(imageInput.files);
+
+  const validFiles = files.filter(file =>
+    ['image/jpeg','image/png'].includes(file.type)
+  );
+
+  selectedImages = selectedImages.concat(validFiles);
+
+  displayPreviews();
+  imageInput.value = '';
+});
+
+function displayPreviews(){
+  previewGrid.innerHTML = '';
+
+  selectedImages.forEach((file,index) => {
+    const url = URL.createObjectURL(file);
+
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = file.name;
+
+    const name = document.createElement('p');
+    name.textContent = file.name;
+
+    const remove = document.createElement('button');
+    remove.className = 'secondary';
+    remove.textContent = 'Remove';
+    remove.type = 'button';
+
+    remove.addEventListener('click', () => {
+      selectedImages.splice(index,1);
+      displayPreviews();
+    });
+
+    item.append(img,name,remove);
+    previewGrid.appendChild(item);
+  });
+
+  status.textContent = selectedImages.length
+    ? selectedImages.length + ' image(s) selected.'
+    : '';
+}
+
+document.getElementById('clearButton').addEventListener('click',()=>{
+  selectedImages = [];
+  previewGrid.innerHTML = '';
+  imageInput.value = '';
+  status.textContent = 'All images cleared.';
+});
+
+function loadImage(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const img = new Image();
+
+      img.onload = () => resolve({
+        image:img,
+        data:reader.result
+      });
+
+      img.onerror = () => reject(
+        new Error('Could not read ' + file.name)
+      );
+
+      img.src = reader.result;
+    };
+
+    reader.onerror = () => reject(
+      new Error('Could not open ' + file.name)
+    );
+
+    reader.readAsDataURL(file);
+  });
+}
+
+convertButton.addEventListener('click',async()=>{
+  if(selectedImages.length === 0){
+    status.textContent = 'Please upload at least one image.';
+    return;
+  }
+
+  if(!window.jspdf){
+    status.textContent = 'PDF library could not load. Please refresh and try again.';
+    return;
+  }
+
+  convertButton.disabled = true;
+  status.textContent = 'Creating your PDF...';
+
+  try{
+    const {jsPDF} = window.jspdf;
+
+    const pageSize = document.getElementById('pageSize').value;
+    const orientation = document.getElementById('orientation').value;
+    const margin = Number(document.getElementById('margin').value);
+
+    let pdf = null;
+
+    for(let i=0;i<selectedImages.length;i++){
+      const result = await loadImage(selectedImages[i]);
+      const img = result.image;
+
+      let pageWidth;
+      let pageHeight;
+
+      if(pageSize === 'fit'){
+        pageWidth = img.naturalWidth * 0.264583;
+        pageHeight = img.naturalHeight * 0.264583;
+      }else{
+        const sizes = {
+          a4:[210,297],
+          a5:[148,210],
+          letter:[215.9,279.4]
+        };
+
+        [pageWidth,pageHeight] = sizes[pageSize];
+
+        if(orientation === 'landscape'){
+          [pageWidth,pageHeight] = [pageHeight,pageWidth];
+        }
+      }
+
+      const pageOrientation = pageWidth > pageHeight
+        ? 'landscape' : 'portrait';
+
+      if(i===0){
+        pdf = new jsPDF({
+          orientation:pageOrientation,
+          unit:'mm',
+          format:pageSize === 'fit'
+            ? [pageWidth,pageHeight]
+            : pageSize
+        });
+      }else{
+        pdf.addPage(
+          pageSize === 'fit'
+            ? [pageWidth,pageHeight]
+            : pageSize,
+          pageOrientation
+        );
+      }
+
+      const availableWidth = pageWidth - margin*2;
+      const availableHeight = pageHeight - margin*2;
+
+      const ratio = Math.min(
+        availableWidth/img.naturalWidth,
+        availableHeight/img.naturalHeight
+      );
+
+      const drawWidth = img.naturalWidth*ratio;
+      const drawHeight = img.naturalHeight*ratio;
+
+      const x = (pageWidth-drawWidth)/2;
+      const y = (pageHeight-drawHeight)/2;
+
+      pdf.addImage(
+        result.data,
+        selectedImages[i].type === 'image/png' ? 'PNG' : 'JPEG',
+        x,y,drawWidth,drawHeight
+      );
+    }
+
+    pdf.save('QuickTaskTools-Images.pdf');
+    status.textContent = 'Your PDF has been created successfully!';
+
+  }catch(error){
+    console.error(error);
+    status.textContent = 'Error: ' + error.message;
+
+  }finally{
+    convertButton.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>
