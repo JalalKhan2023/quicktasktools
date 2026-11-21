@@ -794,18 +794,19 @@ async function removePhotoBackground() {
 
     // Apply the AI mask as an alpha mask.
     cutoutCtx.globalCompositeOperation = 'destination-in';
-    cutoutCtx.filter = 'blur(0.7px)';
 
-    cutoutCtx.drawImage(
-      mask,
-      0,
-      0,
-      cutout.width,
-      cutout.height
-    );
+cutoutCtx.filter = 'blur(1.2px)';
 
-    cutoutCtx.filter = 'none';
-    cutoutCtx.globalCompositeOperation = 'source-over';
+cutoutCtx.drawImage(
+  mask,
+  0,
+  0,
+  cutout.width,
+  cutout.height
+);
+
+cutoutCtx.filter = 'none';
+cutoutCtx.globalCompositeOperation = 'source-over';
 
     // Store the transparent foreground.
     maskedPhoto = cutout;
