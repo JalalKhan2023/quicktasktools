@@ -1,0 +1,712 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Free Passport Photo Maker Online | QuickTaskTools</title>
+<meta name="description" content="Create passport and visa photos online. Crop, resize and prepare photos in 35x45mm, 2x2 inch and custom dimensions. Free and private browser-based tool.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://quicktasktools.mangalchinar.workers.dev/passport-photo-maker.html">
+<meta name="theme-color" content="#ffffff">
+
+<style>
+*{box-sizing:border-box}
+:root{
+ --blue:#2457e6;
+ --dark:#17233c;
+ --muted:#667085;
+ --border:#e5e9f2;
+ --bg:#f7f9fc;
+}
+body{
+ margin:0;
+ font-family:Arial,Helvetica,sans-serif;
+ color:var(--dark);
+ background:white;
+}
+header{border-bottom:1px solid var(--border)}
+nav{
+ max-width:1050px;
+ margin:auto;
+ padding:18px 20px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+.logo{
+ font-size:22px;
+ font-weight:800;
+ text-decoration:none;
+ color:var(--dark);
+}
+.logo span{color:var(--blue)}
+nav a:not(.logo){
+ text-decoration:none;
+ color:var(--muted);
+ font-size:14px;
+ margin-left:18px;
+}
+.hero{
+ text-align:center;
+ background:linear-gradient(135deg,#eff4ff,#f9fbff);
+ padding:45px 18px;
+}
+.hero h1{
+ font-size:clamp(27px,5vw,40px);
+ letter-spacing:-1px;
+ margin:0 0 12px;
+}
+.hero p{
+ max-width:650px;
+ margin:auto;
+ color:var(--muted);
+ line-height:1.6;
+}
+main{
+ max-width:950px;
+ margin:auto;
+ padding:35px 18px;
+}
+.panel{
+ border:1px solid var(--border);
+ border-radius:17px;
+ padding:25px;
+ box-shadow:0 8px 30px #1b31500c;
+}
+label{
+ display:block;
+ font-size:14px;
+ font-weight:bold;
+ margin:20px 0 9px;
+}
+.upload{
+ border:2px dashed #b8c6e8;
+ border-radius:12px;
+ background:#f9fbff;
+ padding:30px 12px;
+ text-align:center;
+ cursor:pointer;
+}
+.upload:hover{border-color:var(--blue)}
+.upload strong{display:block;margin:10px}
+.upload small,.hint{
+ color:var(--muted);
+ font-size:13px;
+}
+input[type=file]{display:none}
+select,input[type=number]{
+ width:100%;
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:8px;
+ font-size:15px;
+ background:white;
+}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.controls{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:15px;
+}
+button{
+ border:0;
+ border-radius:8px;
+ font-size:14px;
+ font-weight:bold;
+ cursor:pointer;
+ padding:12px;
+}
+.primary{
+ background:var(--blue);
+ color:white;
+ width:100%;
+ padding:15px;
+ margin-top:22px;
+}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.secondary{
+ background:#edf1fa;
+ color:var(--dark);
+}
+.editor{
+ display:none;
+ margin-top:22px;
+}
+.editor-layout{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 260px;
+ gap:22px;
+ align-items:start;
+}
+.canvas-area{
+ background:#f1f4fa;
+ padding:15px;
+ border-radius:12px;
+ text-align:center;
+}
+#photoCanvas{
+ display:block;
+ max-width:100%;
+ max-height:420px;
+ width:auto;
+ height:auto;
+ margin:auto;
+ background:white;
+ box-shadow:0 3px 15px #0002;
+}
+.control-box{
+ border:1px solid var(--border);
+ padding:14px;
+ border-radius:10px;
+ margin-bottom:12px;
+}
+.control-box label{margin:0 0 10px}
+.control-value{
+ color:var(--blue);
+ font-size:13px;
+ font-weight:bold;
+}
+.status{
+ display:none;
+ margin-top:16px;
+ padding:14px;
+ background:#eff4ff;
+ border-radius:9px;
+ font-size:14px;
+ line-height:1.6;
+}
+.result{
+ display:none;
+ background:#effaf3;
+ padding:18px;
+ border-radius:10px;
+ margin-top:20px;
+}
+.result img{
+ max-width:160px;
+ max-height:210px;
+ display:block;
+ margin:15px auto;
+ border:1px solid #ddd;
+}
+.download{
+ display:block;
+ background:#137b48;
+ color:white;
+ text-align:center;
+ text-decoration:none;
+ padding:14px;
+ border-radius:8px;
+ font-weight:bold;
+ margin-top:12px;
+}
+.privacy{
+ text-align:center;
+ font-size:13px;
+ color:var(--muted);
+ margin-top:20px;
+}
+.info{
+ background:var(--bg);
+ padding:38px 20px;
+}
+.info-inner{
+ max-width:800px;
+ margin:auto;
+ line-height:1.7;
+}
+.info h2{font-size:22px;margin-top:24px}
+.info p,.info li{font-size:15px;color:#536078}
+footer{
+ text-align:center;
+ padding:25px;
+ border-top:1px solid var(--border);
+ font-size:13px;
+ color:var(--muted);
+}
+footer a{color:var(--muted);margin:0 8px}
+@media(max-width:700px){
+ .editor-layout{grid-template-columns:1fr}
+ .editor-layout .controls-panel{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .panel{padding:17px}
+}
+@media(max-width:420px){
+ .editor-layout .controls-panel{grid-template-columns:1fr}
+ .controls{grid-template-columns:1fr}
+ nav{padding:15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<nav>
+<a href="index.html" class="logo">QuickTask<span>Tools</span></a>
+<div>
+<a href="index.html">Home</a>
+<a href="index.html#tools">All Tools</a>
+</div>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Free Passport Photo Maker</h1>
+<p>Create passport and visa photographs online. Crop, resize and prepare your photo in standard and custom dimensions.</p>
+</section>
+
+<main>
+<div class="panel">
+
+<label for="file" style="margin-top:0">1. Upload your photograph</label>
+
+<div class="upload" id="dropzone">
+<div style="font-size:36px">📷</div>
+<strong>Click to upload your photograph</strong>
+<small>Or drag and drop JPG, PNG or WebP · Maximum 20 MB</small>
+</div>
+<input type="file" id="file" accept="image/jpeg,image/png,image/webp">
+
+<label for="preset">2. Select photo size</label>
+<select id="preset">
+<option value="us">US Passport – 2 × 2 inches</option>
+<option value="35x45" selected>Standard 35 × 45 mm</option>
+<option value="2x2">2 × 2 inches</option>
+<option value="custom">Custom dimensions</option>
+</select>
+
+<div class="controls">
+ <div>
+  <label for="width">Width (pixels)</label>
+  <input id="width" type="number" min="50" max="3000" value="413">
+ </div>
+ <div>
+  <label for="height">Height (pixels)</label>
+  <input id="height" type="number" min="50" max="3000" value="531">
+ </div>
+</div>
+
+<div class="controls">
+ <div>
+  <label for="dpi">Print resolution (DPI)</label>
+  <select id="dpi">
+   <option value="300" selected>300 DPI</option>
+   <option value="200">200 DPI</option>
+   <option value="150">150 DPI</option>
+  </select>
+ </div>
+ <div>
+  <label for="background">Canvas background</label>
+  <select id="background">
+   <option value="white">White</option>
+   <option value="transparent">Transparent (PNG only)</option>
+  </select>
+ </div>
+</div>
+
+<div class="editor" id="editor">
+ <label>3. Adjust your photograph</label>
+ <div class="editor-layout">
+
+  <div class="canvas-area">
+   <canvas id="photoCanvas" width="413" height="531"></canvas>
+   <p class="hint">Preview of your cropped photograph</p>
+  </div>
+
+  <div class="controls-panel">
+
+   <div class="control-box">
+    <label for="zoom">Zoom</label>
+    <input id="zoom" type="range" min="1" max="3" step=".01" value="1">
+    <div class="control-value" id="zoomValue">100%</div>
+   </div>
+
+   <div class="control-box">
+    <label for="horizontal">Horizontal position</label>
+    <input id="horizontal" type="range" min="0" max="100" value="50">
+    <div class="control-value" id="horizontalValue">50%</div>
+   </div>
+
+   <div class="control-box">
+    <label for="vertical">Vertical position</label>
+    <input id="vertical" type="range" min="0" max="100" value="50">
+    <div class="control-value" id="verticalValue">50%</div>
+   </div>
+
+   <button type="button" class="secondary" id="reset">Reset crop</button>
+
+  </div>
+ </div>
+</div>
+
+<label for="target">4. Maximum file size (optional)</label>
+<select id="target">
+ <option value="0">No specific limit</option>
+ <option value="20">20 KB</option>
+ <option value="50">50 KB</option>
+ <option value="100" selected>100 KB</option>
+ <option value="200">200 KB</option>
+ <option value="500">500 KB</option>
+</select>
+
+<label for="format">5. Download format</label>
+<select id="format">
+ <option value="image/jpeg">JPG</option>
+ <option value="image/png">PNG</option>
+</select>
+
+<button type="button" class="primary" id="create" disabled>Create Passport Photo</button>
+
+<div class="status" id="status" role="status" aria-live="polite"></div>
+
+<div class="result" id="result">
+ <h3 style="color:#13733b;margin-top:0">Your photograph is ready!</h3>
+ <img id="finalPreview" alt="Completed passport photograph">
+ <p id="finalInfo" style="font-size:14px;text-align:center"></p>
+ <a id="download" class="download">Download Passport Photo</a>
+</div>
+
+<p class="privacy">🔒 Your photograph is processed locally in your browser. It is not uploaded to our server.</p>
+
+</div>
+</main>
+
+<section class="info">
+<div class="info-inner">
+
+<h2>How to make a passport-size photo online</h2>
+<p>Use this free passport photo maker to crop and resize a photograph for passport, visa, identity card and job application requirements.</p>
+
+<ol>
+<li>Upload your photograph.</li>
+<li>Select the required photo dimensions.</li>
+<li>Adjust zoom and photograph positioning.</li>
+<li>Select the maximum file size if required.</li>
+<li>Click Create Passport Photo.</li>
+<li>Download your completed photograph.</li>
+</ol>
+
+<h2>What is the standard passport photo size?</h2>
+<p>Passport photograph dimensions depend on the country and document type. Some common digital formats include 35 × 45 mm and 2 × 2 inches. Always check the official authority's requirements before submitting a photograph.</p>
+
+<h2>Does this tool remove the photograph background?</h2>
+<p>No. This tool crops and resizes your photograph. Its white background option fills transparent canvas areas but does not automatically remove or replace an existing photograph background.</p>
+
+<h2>Are my photographs uploaded?</h2>
+<p>No. Your photograph is processed locally inside your browser. It is not sent to our website server.</p>
+
+<h2>What does 300 DPI mean?</h2>
+<p>DPI describes print resolution. This tool calculates pixel dimensions based on the selected print size and DPI. The downloaded image is sized in pixels; the DPI metadata itself is not embedded in the JPEG or PNG file.</p>
+
+<h2>Important photo requirements</h2>
+<p>Different passport and visa authorities may specify face size, head position, background colour, expression, lighting and image quality. This tool does not automatically verify official compliance or identify facial positioning.</p>
+
+</div>
+</section>
+
+<footer>
+<p>© 2026 QuickTaskTools. Free online tools.</p>
+<a href="index.html">Home</a>
+<a href="index.html#tools">All Tools</a>
+<a href="mailto:contact@quicktasktools.com">Contact</a>
+</footer>
+
+<script>
+const fileInput=document.getElementById('file');
+const dropzone=document.getElementById('dropzone');
+const preset=document.getElementById('preset');
+const widthInput=document.getElementById('width');
+const heightInput=document.getElementById('height');
+const canvas=document.getElementById('photoCanvas');
+const ctx=canvas.getContext('2d');
+const createButton=document.getElementById('create');
+
+let photo=null;
+let sourceURL=null;
+let outputURL=null;
+let sourceFile=null;
+let busy=false;
+
+const sizes={
+ us:{w:600,h:600},
+ '35x45':{w:413,h:531},
+ '2x2':{w:600,h:600}
+};
+
+function setDimensions(){
+ const dpi=Number(document.getElementById('dpi').value);
+ const value=preset.value;
+
+ if(value==='custom')return;
+
+ let size;
+ if(value==='us'||value==='2x2'){
+  const px=Math.round(2*dpi);
+  size={w:px,h:px};
+ }else{
+  size={
+   w:Math.round((35/25.4)*dpi),
+   h:Math.round((45/25.4)*dpi)
+  };
+ }
+
+ widthInput.value=size.w;
+ heightInput.value=size.h;
+
+ if(photo)drawPhoto();
+}
+
+preset.addEventListener('change',()=>{
+ setDimensions();
+});
+
+document.getElementById('dpi').addEventListener('change',()=>{
+ setDimensions();
+});
+
+widthInput.addEventListener('change',()=>{
+ preset.value='custom';
+ if(photo)drawPhoto();
+});
+
+heightInput.addEventListener('change',()=>{
+ preset.value='custom';
+ if(photo)drawPhoto();
+});
+
+function showStatus(message){
+ const box=document.getElementById('status');
+ box.style.display='block';
+ box.textContent=message;
+}
+
+function clearResult(){
+ document.getElementById('result').style.display='none';
+ if(outputURL){
+  URL.revokeObjectURL(outputURL);
+  outputURL=null;
+ }
+}
+
+dropzone.addEventListener('click',()=>fileInput.click());
+
+dropzone.addEventListener('dragover',e=>{
+ e.preventDefault();
+ dropzone.style.borderColor='#2457e6';
+});
+
+dropzone.addEventListener('dragleave',()=>{
+ dropzone.style.borderColor='#b8c6e8';
+});
+
+dropzone.addEventListener('drop',e=>{
+ e.preventDefault();
+ dropzone.style.borderColor='#b8c6e8';
+ if(e.dataTransfer.files.length)loadFile(e.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener('change',()=>{
+ if(fileInput.files.length)loadFile(fileInput.files[0]);
+});
+
+function loadFile(file){
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)){
+  alert('Please upload a JPG, PNG or WebP image.');
+  return;
+ }
+
+ if(file.size>20*1024*1024){
+  alert('Please select an image smaller than 20 MB.');
+  return;
+ }
+
+ if(sourceURL)URL.revokeObjectURL(sourceURL);
+ clearResult();
+
+ sourceFile=file;
+ sourceURL=URL.createObjectURL(file);
+
+ const img=new Image();
+
+ img.onload=()=>{
+  photo=img;
+
+  document.getElementById('editor').style.display='block';
+  document.getElementById('preview');
+  createButton.disabled=false;
+
+  document.getElementById('zoom').value=1;
+  document.getElementById('horizontal').value=50;
+  document.getElementById('vertical').value=50;
+
+  document.getElementById('zoomValue').textContent='100%';
+  document.getElementById('horizontalValue').textContent='50%';
+  document.getElementById('verticalValue').textContent='50%';
+
+  drawPhoto();
+  document.getElementById('status').style.display='none';
+ };
+
+ img.onerror=()=>{
+  alert('Could not read this photograph.');
+ };
+
+ img.src=sourceURL;
+}
+
+function drawPhoto(){
+ if(!photo)return;
+
+ const w=Number(widthInput.value);
+ const h=Number(heightInput.value);
+
+ if(!Number.isInteger(w)||!Number.isInteger(h)||
+ w<50||h<50||w>3000||h>3000||w*h>9000000){
+  showStatus('Enter valid dimensions between 50 and 3000 pixels, with no more than 9 million total pixels.');
+  return;
+ }
+
+ canvas.width=w;
+ canvas.height=h;
+
+ const background=document.getElementById('background').value;
+
+ if(background==='white'){
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,w,h);
+ }else{
+  ctx.clearRect(0,0,w,h);
+ }
+
+ const zoom=Number(document.getElementById('zoom').value);
+ const xPosition=Number(document.getElementById('horizontal').value)/100;
+ const yPosition=Number(document.getElementById('vertical').value)/100;
+
+ const scale=Math.max(w/photo.naturalWidth,h/photo.naturalHeight)*zoom;
+
+ const sw=w/scale;
+ const sh=h/scale;
+
+ const sx=(photo.naturalWidth-sw)*xPosition;
+ const sy=(photo.naturalHeight-sh)*yPosition;
+
+ ctx.drawImage(photo,sx,sy,sw,sh,0,0,w,h);
+
+ document.getElementById('zoomValue').textContent=Math.round(zoom*100)+'%';
+ document.getElementById('horizontalValue').textContent=Math.round(xPosition*100)+'%';
+ document.getElementById('verticalValue').textContent=Math.round(yPosition*100)+'%';
+}
+
+['zoom','horizontal','vertical','background'].forEach(id=>{
+ document.getElementById(id).addEventListener('input',drawPhoto);
+ document.getElementById(id).addEventListener('change',drawPhoto);
+});
+
+document.getElementById('reset').addEventListener('click',()=>{
+ document.getElementById('zoom').value=1;
+ document.getElementById('horizontal').value=50;
+ document.getElementById('vertical').value=50;
+ drawPhoto();
+});
+
+function makeBlob(canvas,type,quality){
+ return new Promise(resolve=>canvas.toBlob(resolve,type,quality));
+}
+
+async function encodePhoto(type,targetBytes){
+ let blob=null;
+
+ if(type==='image/png'){
+  blob=await makeBlob(canvas,type);
+ }else if(targetBytes===0){
+  blob=await makeBlob(canvas,type,.92);
+ }else{
+  let low=.05,high=.95,best=null;
+
+  for(let i=0;i<12;i++){
+   const q=(low+high)/2;
+   const candidate=await makeBlob(canvas,type,q);
+   if(!candidate)throw new Error('Image encoding failed.');
+
+   if(candidate.size<=targetBytes){
+    best=candidate;
+    low=q;
+   }else{
+    high=q;
+   }
+  }
+  blob=best;
+ }
+
+ return blob;
+}
+
+createButton.addEventListener('click',async()=>{
+ if(!photo||busy)return;
+
+ const w=Number(widthInput.value);
+ const h=Number(heightInput.value);
+
+ if(!Number.isInteger(w)||!Number.isInteger(h)||
+ w<50||h<50||w>3000||h>3000||w*h>9000000){
+  alert('Please enter valid image dimensions.');
+  return;
+ }
+
+ const type=document.getElementById('format').value;
+ const targetKB=Number(document.getElementById('target').value);
+ const targetBytes=targetKB>0?targetKB*1024:0;
+
+ busy=true;
+ createButton.disabled=true;
+ clearResult();
+ showStatus('Creating your passport photograph...');
+
+ try{
+  drawPhoto();
+
+  let blob=await encodePhoto(type,targetBytes);
+
+  if(!blob)throw new Error('Could not create your image.');
+
+  if(targetBytes>0&&blob.size>targetBytes){
+   throw new Error('The selected file-size limit could not be achieved at these dimensions. Try JPG format, smaller dimensions or a larger file-size limit.');
+  }
+
+  if(outputURL)URL.revokeObjectURL(outputURL);
+  outputURL=URL.createObjectURL(blob);
+
+  const ext=type==='image/png'?'png':'jpg';
+  const download=document.getElementById('download');
+
+  download.href=outputURL;
+  download.download='quicktasktools-passport-photo.'+ext;
+
+  document.getElementById('finalPreview').src=outputURL;
+
+  const dpi=Number(document.getElementById('dpi').value);
+  const mmW=(w/dpi*25.4).toFixed(1);
+  const mmH=(h/dpi*25.4).toFixed(1);
+
+  document.getElementById('finalInfo').textContent=
+   'Dimensions: '+w+' × '+h+' pixels | Approximate print size: '+
+   mmW+' × '+mmH+' mm at '+dpi+' DPI | File size: '+
+   (blob.size/1024).toFixed(2)+' KB';
+
+  document.getElementById('result').style.display='block';
+  showStatus('Your photograph has been created successfully.');
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+
+ }catch(error){
+  showStatus(error.message);
+ }finally{
+  busy=false;
+  createButton.disabled=false;
+ }
+});
+</script>
+
+</body>
+</html>
