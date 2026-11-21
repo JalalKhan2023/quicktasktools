@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Resizer to 20KB, 50KB, 100KB Online Free | QuickTaskTools</title>
+<meta name="description" content="Resize and compress images to 20KB, 50KB, 100KB, 200KB or a custom size online. Free JPG image resizer with private browser-based processing.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://quicktasktools.mangalchinar.workers.dev/image-resizer.html">
+<meta name="theme-color" content="#ffffff">
+
+<style>
+*{box-sizing:border-box}
+:root{--blue:#2457e6;--dark:#17233c;--muted:#667085;--border:#e5e9f2;--bg:#f7f9fc}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:white}
+header{border-bottom:1px solid var(--border)}
+nav{max-width:1050px;margin:auto;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:800;text-decoration:none;color:var(--dark)}
+.logo span{color:var(--blue)}
+nav a:not(.logo){text-decoration:none;color:var(--muted);font-size:14px;margin-left:18px}
+.hero{text-align:center;background:linear-gradient(135deg,#eff4ff,#f9fbff);padding:48px 20px}
+.hero h1{font-size:clamp(28px,5vw,42px);letter-spacing:-1px;margin:0 0 12px}
+.hero p{color:var(--muted);max-width:650px;margin:auto;line-height:1.6}
+main{max-width:850px;margin:auto;padding:35px 18px}
+.panel{border:1px solid var(--border);border-radius:17px;padding:25px;box-shadow:0 8px 30px #1b31500c}
+.upload{border:2px dashed #b8c6e8;border-radius:12px;background:#f9fbff;text-align:center;padding:30px 12px;cursor:pointer}
+.upload:hover{border-color:var(--blue)}
+.upload strong{display:block;margin:9px}
+.upload small,.hint{color:var(--muted);font-size:13px}
+input[type=file]{display:none}
+label{font-weight:bold;font-size:14px;display:block;margin:19px 0 9px}
+input[type=number],select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:white}
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+.preset{background:#f1f4fa;border:1px solid transparent;color:var(--dark);padding:11px 5px}
+.preset.selected{background:#edf2ff;border-color:var(--blue);color:var(--blue)}
+button{border:0;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.primary{background:var(--blue);color:white;width:100%;padding:15px;margin-top:23px}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.preview{display:none;margin-top:20px;text-align:center}
+.preview img{max-width:100%;max-height:240px;border-radius:9px}
+.preview p{font-size:13px;color:var(--muted)}
+.status{display:none;margin-top:16px;background:#eff4ff;padding:14px;border-radius:9px;font-size:14px;line-height:1.6}
+.result{display:none;margin-top:20px;padding:18px;border-radius:10px;background:#effaf3}
+.result h3{color:#13733b;margin-top:0}
+.result img{max-width:100%;max-height:220px;display:block;margin:12px auto;border-radius:8px}
+.download{display:block;text-align:center;text-decoration:none;background:#137b48;color:white;padding:14px;border-radius:8px;margin-top:13px;font-weight:bold}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:white;padding:12px;border-radius:8px}
+.stat small{display:block;color:var(--muted);margin-bottom:5px}
+.privacy{text-align:center;color:var(--muted);font-size:13px;margin:18px 0 0}
+.info{background:var(--bg);padding:35px 20px}
+.info-inner{max-width:800px;margin:auto;line-height:1.7}
+.info h2{font-size:22px;margin-top:24px}
+.info p,.info li{font-size:15px;color:#536078}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)}
+footer a{color:var(--muted);margin:0 8px}
+@media(max-width:500px){.panel{padding:17px}.presets{grid-template-columns:repeat(2,1fr)}nav{padding:15px}.hero{padding:38px 16px}}
+</style>
+</head>
+
+<body>
+<header>
+<nav>
+<a href="index.html" class="logo">QuickTask<span>Tools</span></a>
+<div>
+<a href="index.html">Home</a>
+<a href="index.html#tools">All Tools</a>
+</div>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Image Resizer to Exact KB</h1>
+<p>Compress and resize your image to 20KB, 50KB, 100KB, 200KB or any custom file size. Free, fast and private.</p>
+</section>
+
+<main>
+<div class="panel">
+
+<label for="file" style="margin-top:0">1. Upload your image</label>
+<div class="upload" id="dropzone">
+<div style="font-size:35px">🖼️</div>
+<strong>Click to upload or drag your image here</strong>
+<small>JPG, PNG and WebP supported · Maximum 20 MB</small>
+</div>
+<input id="file" type="file" accept="image/jpeg,image/png,image/webp">
+
+<div class="preview" id="preview">
+<img id="original" alt="Original image preview">
+<p id="originalInfo"></p>
+</div>
+
+<label>2. Choose target file size</label>
+<div class="presets" id="presets">
+<button type="button" class="preset" data-size="20">20 KB</button>
+<button type="button" class="preset" data-size="50">50 KB</button>
+<button type="button" class="preset selected" data-size="100">100 KB</button>
+<button type="button" class="preset" data-size="200">200 KB</button>
+<button type="button" class="preset" data-size="500">500 KB</button>
+<button type="button" class="preset" data-size="1000">1 MB</button>
+</div>
+
+<label for="target">Custom target size (KB)</label>
+<input id="target" type="number" min="5" max="10000" value="100">
+<p class="hint">Enter any value between 5 KB and 10,000 KB.</p>
+
+<label for="format">3. Output format</label>
+<select id="format">
+<option value="image/jpeg">JPG (recommended)</option>
+<option value="image/webp">WebP (smaller file size)</option>
+</select>
+
+<label for="width">4. Image width (pixels)</label>
+<input id="width" type="number" min="1" max="12000" placeholder="Original width">
+
+<label for="height">Image height (pixels)</label>
+<input id="height" type="number" min="1" max="12000" placeholder="Original height">
+<p class="hint">Leave both dimensions empty to maintain the original dimensions. If you change one dimension, the other will adjust automatically.</p>
+
+<button class="primary" id="process" disabled>Resize & Compress Image</button>
+
+<div class="status" id="status" role="status" aria-live="polite"></div>
+
+<div class="result" id="result">
+<h3>Image processed successfully!</h3>
+<div class="stats">
+<div class="stat"><small>Original size</small><strong id="oldSize"></strong></div>
+<div class="stat"><small>New size</small><strong id="newSize"></strong></div>
+<div class="stat"><small>Dimensions</small><strong id="dimensions"></strong></div>
+<div class="stat"><small>Target limit</small><strong id="targetSize"></strong></div>
+</div>
+<img id="outputPreview" alt="Resized image preview">
+<p id="saving" style="text-align:center;font-size:13px"></p>
+<a id="download" class="download" download="quicktasktools-resized.jpg">Download Resized Image</a>
+</div>
+
+<p class="privacy">🔒 Your images are processed inside your browser. They are not uploaded to our server.</p>
+</div>
+</main>
+
+<section class="info">
+<div class="info-inner">
+<h2>Resize images to a specific KB size online</h2>
+<p>Many online applications, examination forms, job portals and government websites require photographs and documents within a specified file-size limit. This free image resizer helps you prepare images for those requirements.</p>
+
+<h2>How to resize an image to 50KB or 100KB</h2>
+<ol>
+<li>Upload your JPG, PNG or WebP image.</li>
+<li>Select your required size, such as 50KB or 100KB.</li>
+<li>Adjust the image dimensions if necessary.</li>
+<li>Click Resize & Compress Image.</li>
+<li>Download your processed image.</li>
+</ol>
+
+<h2>Does this tool upload my image?</h2>
+<p>No. Image processing takes place locally in your browser using JavaScript and the Canvas API. Your selected image is not sent to our server.</p>
+
+<h2>Can every image be reduced to 20KB?</h2>
+<p>Not always at its original dimensions. Some detailed or high-resolution photographs require smaller dimensions to meet very low file-size limits. Our tool automatically reduces dimensions when necessary to meet your selected maximum size.</p>
+
+<h2>Is the output exactly the selected KB size?</h2>
+<p>The tool targets a maximum file size. For example, a 100KB target means the output will be no larger than 100KB. The resulting file may be smaller because image compression works in discrete steps.</p>
+</div>
+</section>
+
+<footer>
+<p>© 2026 QuickTaskTools. Free online tools.</p>
+<a href="index.html">Home</a>
+<a href="index.html#tools">All Tools</a>
+<a href="mailto:contact@quicktasktools.com">Contact</a>
+</footer>
+
+<script>
+const fileInput=document.getElementById('file');
+const dropzone=document.getElementById('dropzone');
+const targetInput=document.getElementById('target');
+const processButton=document.getElementById('process');
+const statusBox=document.getElementById('status');
+const resultBox=document.getElementById('result');
+
+let sourceImage=null;
+let sourceFile=null;
+let sourceURL=null;
+let outputURL=null;
+let processing=false;
+
+function sizeText(bytes){
+ return bytes<1024*1024
+ ? (bytes/1024).toFixed(2)+' KB'
+ : (bytes/(1024*1024)).toFixed(2)+' MB';
+}
+
+function showStatus(message){
+ statusBox.style.display='block';
+ statusBox.textContent=message;
+}
+
+function resetResult(){
+ resultBox.style.display='none';
+ if(outputURL){
+  URL.revokeObjectURL(outputURL);
+  outputURL=null;
+ }
+}
+
+dropzone.addEventListener('click',()=>fileInput.click());
+
+dropzone.addEventListener('dragover',e=>{
+ e.preventDefault();
+ dropzone.style.borderColor='#2457e6';
+});
+
+dropzone.addEventListener('dragleave',()=>{
+ dropzone.style.borderColor='#b8c6e8';
+});
+
+dropzone.addEventListener('drop',e=>{
+ e.preventDefault();
+ dropzone.style.borderColor='#b8c6e8';
+ if(e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener('change',()=>{
+ if(fileInput.files.length) loadFile(fileInput.files[0]);
+});
+
+function loadFile(file){
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)){
+  alert('Please select a JPG, PNG or WebP image.');
+  return;
+ }
+ if(file.size>20*1024*1024){
+  alert('Please choose an image smaller than 20MB.');
+  return;
+ }
+ if(sourceURL) URL.revokeObjectURL(sourceURL);
+ resetResult();
+ sourceFile=file;
+ sourceURL=URL.createObjectURL(file);
+
+ const img=new Image();
+ img.onload=()=>{
+  sourceImage=img;
+  document.getElementById('original').src=sourceURL;
+  document.getElementById('preview').style.display='block';
+  document.getElementById('originalInfo').textContent=
+   img.naturalWidth+' × '+img.naturalHeight+' pixels | '+sizeText(file.size);
+  document.getElementById('width').value=img.naturalWidth;
+  document.getElementById('height').value=img.naturalHeight;
+  processButton.disabled=false;
+  statusBox.style.display='none';
+ };
+ img.onerror=()=>{
+  alert('Unable to read this image. Please try another file.');
+ };
+ img.src=sourceURL;
+}
+
+document.querySelectorAll('.preset').forEach(button=>{
+ button.addEventListener('click',()=>{
+  targetInput.value=button.dataset.size;
+  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('selected'));
+  button.classList.add('selected');
+ });
+});
+
+targetInput.addEventListener('input',()=>{
+ document.querySelectorAll('.preset').forEach(b=>{
+  b.classList.toggle('selected',Number(b.dataset.size)===Number(targetInput.value));
+ });
+});
+
+document.getElementById('width').addEventListener('input',()=>{
+ if(!sourceImage) return;
+ const w=Number(document.getElementById('width').value);
+ if(w>0){
+  document.getElementById('height').value=Math.round(w*sourceImage.naturalHeight/sourceImage.naturalWidth);
+ }
+});
+
+document.getElementById('height').addEventListener('input',()=>{
+ if(!sourceImage) return;
+ const h=Number(document.getElementById('height').value);
+ if(h>0){
+  document.getElementById('width').value=Math.round(h*sourceImage.naturalWidth/sourceImage.naturalHeight);
+ }
+});
+
+function makeBlob(canvas,type,quality){
+ return new Promise(resolve=>canvas.toBlob(resolve,type,quality));
+}
+
+async function findBestBlob(canvas,type,targetBytes){
+ let low=0.04,high=0.95,best=null;
+
+ for(let i=0;i<11;i++){
+  const q=(low+high)/2;
+  const blob=await makeBlob(canvas,type,q);
+  if(!blob) throw new Error('Image encoding failed.');
+
+  if(blob.size<=targetBytes){
+   best=blob;
+   low=q;
+  }else{
+   high=q;
+  }
+ }
+ return best;
+}
+
+processButton.addEventListener('click',async()=>{
+ if(!sourceImage || processing) return;
+
+ const targetKB=Number(targetInput.value);
+ if(!Number.isFinite(targetKB)||targetKB<5||targetKB>10000){
+  alert('Please enter a target between 5KB and 10,000KB.');
+  return;
+ }
+
+ const requestedWidth=Number(document.getElementById('width').value);
+ const requestedHeight=Number(document.getElementById('height').value);
+
+ if(!Number.isInteger(requestedWidth)||!Number.isInteger(requestedHeight)||
+ requestedWidth<1||requestedHeight<1||
+ requestedWidth>12000||requestedHeight>12000){
+  alert('Please enter valid image dimensions between 1 and 12,000 pixels.');
+  return;
+ }
+
+ if(requestedWidth*requestedHeight>40000000){
+  alert('Please choose dimensions with a combined pixel count below 40 million.');
+  return;
+ }
+
+ processing=true;
+ processButton.disabled=true;
+ resetResult();
+ showStatus('Processing image. Please wait...');
+
+ try{
+  const type=document.getElementById('format').value;
+  const targetBytes=targetKB*1024;
+  let w=requestedWidth;
+  let h=requestedHeight;
+  let best=null;
+  let canvas=document.createElement('canvas');
+
+  // Try the requested dimensions first, then reduce dimensions if necessary.
+  for(let attempt=0;attempt<18;attempt++){
+   canvas.width=w;
+   canvas.height=h;
+   const ctx=canvas.getContext('2d');
+
+   if(type==='image/jpeg'){
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,w,h);
+   }else{
+    ctx.clearRect(0,0,w,h);
+   }
+
+   ctx.drawImage(sourceImage,0,0,w,h);
+
+   best=await findBestBlob(canvas,type,targetBytes);
+
+   if(best) break;
+
+   // Reduce both dimensions while preserving the aspect ratio.
+   w=Math.max(1,Math.floor(w*0.82));
+   h=Math.max(1,Math.floor(h*0.82));
+
+   showStatus('Optimizing image dimensions: '+w+' × '+h+' pixels...');
+  }
+
+  if(!best){
+   throw new Error('Could not meet this file-size target. Try a larger target size.');
+  }
+
+  outputURL=URL.createObjectURL(best);
+
+  const ext=type==='image/webp'?'webp':'jpg';
+  const link=document.getElementById('download');
+  link.href=outputURL;
+  link.download='quicktasktools-resized.'+ext;
+
+  document.getElementById('oldSize').textContent=sizeText(sourceFile.size);
+  document.getElementById('newSize').textContent=sizeText(best.size);
+  document.getElementById('dimensions').textContent=w+' × '+h+' px';
+  document.getElementById('targetSize').textContent=targetKB+' KB';
+  document.getElementById('outputPreview').src=outputURL;
+
+  const reduction=(1-best.size/sourceFile.size)*100;
+  document.getElementById('saving').textContent=
+   (reduction>0?'File size reduced by '+reduction.toFixed(1)+'%. ':'')+
+   (best.size<=targetBytes?'Target size successfully met.':'Target size not met.');
+
+  resultBox.style.display='block';
+  showStatus('Success! Your image is within the requested maximum file size.');
+  resultBox.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+ }catch(error){
+  showStatus('Unable to process image: '+error.message);
+ }finally{
+  processing=false;
+  processButton.disabled=false;
+ }
+});
+</script>
+</body>
+</html>
