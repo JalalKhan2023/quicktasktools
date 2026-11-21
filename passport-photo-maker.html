@@ -11,6 +11,11 @@
 <link rel="canonical" href="https://quicktasktools.mangalchinar.workers.dev/passport-photo-maker.html">
 <meta name="theme-color" content="#ffffff">
 
+<script
+  src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"
+  crossorigin="anonymous">
+</script>
+
 <style>
 *{box-sizing:border-box}
 :root{
@@ -349,6 +354,13 @@ footer a{color:var(--muted);margin:0 8px}
 
    <button type="button" class="secondary" id="reset">Reset crop</button>
 
+<button type="button" class="primary" id="removeBackground">
+  Remove Original Background
+</button>
+<p class="hint" id="aiStatus">
+  Upload a photo, then remove its original background.
+</p>
+
   </div>
  </div>
 </div>
@@ -435,11 +447,17 @@ const canvas=document.getElementById('photoCanvas');
 const ctx=canvas.getContext('2d');
 const createButton=document.getElementById('create');
 
-let photo=null;
-let sourceURL=null;
-let outputURL=null;
-let sourceFile=null;
-let busy=false;
+
+let photo = null;
+let sourceURL = null;
+let outputURL = null;
+let sourceFile = null;
+let busy = false;
+
+let selfieSegmenter = null;
+let maskedPhoto = null;
+let pendingMaskResolver = null;
+
 
 const sizes={
  us:{w:600,h:600},
@@ -540,6 +558,14 @@ function loadFile(file){
  sourceFile=file;
  sourceURL=URL.createObjectURL(file);
 
+maskedPhoto = null;
+
+document.getElementById('removeBackground').textContent =
+  'Remove Original Background';
+
+document.getElementById('aiStatus').textContent =
+  'Upload a photo, then remove its original background.';
+
  const img=new Image();
 
  img.onload=()=>{
@@ -584,20 +610,23 @@ function drawPhoto(){
  canvas.height=h;
 
  
-const background=document.getElementById('background').value;
+
+const background = document.getElementById('background').value;
 
 let selectedColor = background;
 
-if(background === 'custom'){
+if (background === 'custom') {
   selectedColor = document.getElementById('customColor').value;
 }
 
-if(selectedColor === 'transparent'){
-  ctx.clearRect(0,0,w,h);
-}else{
+// Paint the selected background first.
+ctx.clearRect(0, 0, w, h);
+
+if (selectedColor !== 'transparent') {
   ctx.fillStyle = selectedColor;
-  ctx.fillRect(0,0,w,h);
+  ctx.fillRect(0, 0, w, h);
 }
+
 
 
  const zoom=Number(document.getElementById('zoom').value);
@@ -612,7 +641,13 @@ if(selectedColor === 'transparent'){
  const sx=(photo.naturalWidth-sw)*xPosition;
  const sy=(photo.naturalHeight-sh)*yPosition;
 
- ctx.drawImage(photo,sx,sy,sw,sh,0,0,w,h);
+ 
+ctx.drawImage(
+  maskedPhoto || photo,
+  sx, sy, sw, sh,
+  0, 0, w, h
+);
+
 
  document.getElementById('zoomValue').textContent=Math.round(zoom*100)+'%';
  document.getElementById('horizontalValue').textContent=Math.round(xPosition*100)+'%';
@@ -635,6 +670,129 @@ customColor.addEventListener('input',()=>{
     drawPhoto();
   }
 });
+
+async function removePhotoBackground() {
+  const button = document.getElementById('removeBackground');
+  const aiStatus = document.getElementById('aiStatus');
+
+  if (!photo) {
+    alert('Please upload a photograph first.');
+    return;
+  }
+
+  if (busy) return;
+
+  busy = true;
+  button.disabled = true;
+  button.textContent = 'Loading AI model...';
+  aiStatus.textContent = 'Loading the background-removal model. This may take a moment on first use.';
+
+  try {
+    // Initialize MediaPipe once.
+    if (!selfieSegmenter) {
+      if (typeof SelfieSegmentation === 'undefined') {
+        throw new Error('AI library did not load. Refresh the page and try again.');
+      }
+
+      selfieSegmenter = new SelfieSegmentation({
+        locateFile: file =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
+      });
+
+      selfieSegmenter.setOptions({
+        modelSelection: 0
+      });
+
+      selfieSegmenter.onResults(results => {
+        if (pendingMaskResolver) {
+          const resolve = pendingMaskResolver;
+          pendingMaskResolver = null;
+          resolve(results.segmentationMask);
+        }
+      });
+
+      await selfieSegmenter.initialize();
+    }
+
+    button.textContent = 'Detecting person...';
+    aiStatus.textContent = 'AI is separating the person from the original background...';
+
+    // Request a segmentation mask.
+    const mask = await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        pendingMaskResolver = null;
+        reject(new Error('Processing timed out. Please try again.'));
+      }, 60000);
+
+      pendingMaskResolver = result => {
+        clearTimeout(timeout);
+        resolve(result);
+      };
+
+      selfieSegmenter.send({ image: photo }).catch(error => {
+        clearTimeout(timeout);
+        pendingMaskResolver = null;
+        reject(error);
+      });
+    });
+
+    // Create a transparent cutout of the person.
+    const cutout = document.createElement('canvas');
+    cutout.width = photo.naturalWidth;
+    cutout.height = photo.naturalHeight;
+
+    const cutoutCtx = cutout.getContext('2d');
+
+    cutoutCtx.drawImage(
+      photo,
+      0,
+      0,
+      cutout.width,
+      cutout.height
+    );
+
+    // Apply the AI mask as an alpha mask.
+    cutoutCtx.globalCompositeOperation = 'destination-in';
+    cutoutCtx.filter = 'blur(0.7px)';
+
+    cutoutCtx.drawImage(
+      mask,
+      0,
+      0,
+      cutout.width,
+      cutout.height
+    );
+
+    cutoutCtx.filter = 'none';
+    cutoutCtx.globalCompositeOperation = 'source-over';
+
+    // Store the transparent foreground.
+    maskedPhoto = cutout;
+
+    // Display the person over the currently selected background.
+    drawPhoto();
+
+    aiStatus.textContent =
+      'Background removed! Choose white, blue or another background colour.';
+
+    button.textContent = 'Background Removed ✓';
+
+  } catch (error) {
+    console.error('Background removal:', error);
+
+    aiStatus.textContent =
+      'Unable to remove background: ' + error.message;
+
+    button.textContent = 'Try Again';
+
+  } finally {
+    busy = false;
+    button.disabled = false;
+  }
+}
+
+document.getElementById('removeBackground')
+  .addEventListener('click', removePhotoBackground);
 
 ['zoom','horizontal','vertical','background'].forEach(id=>{
  document.getElementById(id).addEventListener('input',drawPhoto);
