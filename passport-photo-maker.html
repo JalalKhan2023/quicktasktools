@@ -595,64 +595,104 @@ document.getElementById('aiStatus').textContent =
  img.src=sourceURL;
 }
 
-function drawPhoto(){
- if(!photo)return;
 
- const w=Number(widthInput.value);
- const h=Number(heightInput.value);
+function drawPhoto() {
+  if (!photo) return;
 
- if(!Number.isInteger(w)||!Number.isInteger(h)||
- w<50||h<50||w>3000||h>3000||w*h>9000000){
-  showStatus('Enter valid dimensions between 50 and 3000 pixels, with no more than 9 million total pixels.');
-  return;
- }
+  const w = Number(widthInput.value);
+  const h = Number(heightInput.value);
 
- canvas.width=w;
- canvas.height=h;
+  if (
+    !Number.isInteger(w) ||
+    !Number.isInteger(h) ||
+    w < 50 || h < 50 ||
+    w > 3000 || h > 3000 ||
+    w * h > 9000000
+  ) {
+    showStatus('Enter valid dimensions between 50 and 3000 pixels.');
+    return;
+  }
 
- 
+  // Set output canvas dimensions.
+  canvas.width = w;
+  canvas.height = h;
 
-const background = document.getElementById('background').value;
+  // Select original or AI-processed photograph.
+  const activeImage = maskedPhoto || photo;
 
-let selectedColor = background;
+  // Get actual image dimensions.
+  const imageWidth =
+    activeImage.naturalWidth || activeImage.width;
 
-if (background === 'custom') {
-  selectedColor = document.getElementById('customColor').value;
-}
+  const imageHeight =
+    activeImage.naturalHeight || activeImage.height;
 
-// Paint the selected background first.
-ctx.clearRect(0, 0, w, h);
+  // Get selected background colour.
+  const background =
+    document.getElementById('background').value;
 
-if (selectedColor !== 'transparent') {
-  ctx.fillStyle = selectedColor;
-  ctx.fillRect(0, 0, w, h);
-}
+  let selectedColor = background;
 
+  if (background === 'custom') {
+    selectedColor =
+      document.getElementById('customColor').value;
+  }
 
+  // Paint the selected background.
+  ctx.clearRect(0, 0, w, h);
 
- const zoom=Number(document.getElementById('zoom').value);
- const xPosition=Number(document.getElementById('horizontal').value)/100;
- const yPosition=Number(document.getElementById('vertical').value)/100;
+  if (selectedColor !== 'transparent') {
+    ctx.fillStyle = selectedColor;
+    ctx.fillRect(0, 0, w, h);
+  }
 
- const scale=Math.max(w/photo.naturalWidth,h/photo.naturalHeight)*zoom;
+  // Read crop controls.
+  const zoom = Number(
+    document.getElementById('zoom').value
+  );
 
- const sw=w/scale;
- const sh=h/scale;
+  const xPosition =
+    Number(document.getElementById('horizontal').value) / 100;
 
- const sx=(photo.naturalWidth-sw)*xPosition;
- const sy=(photo.naturalHeight-sh)*yPosition;
+  const yPosition =
+    Number(document.getElementById('vertical').value) / 100;
 
- 
-ctx.drawImage(
-  maskedPhoto || photo,
-  sx, sy, sw, sh,
-  0, 0, w, h
-);
+  // Calculate image scale while maintaining aspect ratio.
+  const baseScale = Math.max(
+    w / imageWidth,
+    h / imageHeight
+  );
 
+  const scale = baseScale * zoom;
 
- document.getElementById('zoomValue').textContent=Math.round(zoom*100)+'%';
- document.getElementById('horizontalValue').textContent=Math.round(xPosition*100)+'%';
- document.getElementById('verticalValue').textContent=Math.round(yPosition*100)+'%';
+  // Calculate visible source-image area.
+  const sw = w / scale;
+  const sh = h / scale;
+
+  // Calculate available movement.
+  const maxX = Math.max(0, imageWidth - sw);
+  const maxY = Math.max(0, imageHeight - sh);
+
+  // Calculate horizontal and vertical crop positions.
+  const sx = maxX * xPosition;
+  const sy = maxY * yPosition;
+
+  // Draw original or AI-cutout image.
+  ctx.drawImage(
+    activeImage,
+    sx, sy, sw, sh,
+    0, 0, w, h
+  );
+
+  // Update control indicators.
+  document.getElementById('zoomValue').textContent =
+    Math.round(zoom * 100) + '%';
+
+  document.getElementById('horizontalValue').textContent =
+    Math.round(xPosition * 100) + '%';
+
+  document.getElementById('verticalValue').textContent =
+    Math.round(yPosition * 100) + '%';
 }
 
 const backgroundSelect = document.getElementById('background');
