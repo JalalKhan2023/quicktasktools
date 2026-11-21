@@ -195,6 +195,7 @@ imageInput.addEventListener('change', () => {
   imageInput.value = '';
 });
 
+
 function displayPreviews(){
   previewGrid.innerHTML = '';
 
@@ -209,8 +210,37 @@ function displayPreviews(){
     img.alt = file.name;
 
     const name = document.createElement('p');
-    name.textContent = file.name;
+    name.textContent = (index + 1) + '. ' + file.name;
 
+    // Move Up button
+    const up = document.createElement('button');
+    up.className = 'secondary';
+    up.textContent = '↑ Move Up';
+    up.type = 'button';
+    up.disabled = index === 0;
+
+    up.addEventListener('click', () => {
+      [selectedImages[index - 1], selectedImages[index]] =
+      [selectedImages[index], selectedImages[index - 1]];
+
+      displayPreviews();
+    });
+
+    // Move Down button
+    const down = document.createElement('button');
+    down.className = 'secondary';
+    down.textContent = '↓ Move Down';
+    down.type = 'button';
+    down.disabled = index === selectedImages.length - 1;
+
+    down.addEventListener('click', () => {
+      [selectedImages[index], selectedImages[index + 1]] =
+      [selectedImages[index + 1], selectedImages[index]];
+
+      displayPreviews();
+    });
+
+    // Remove button
     const remove = document.createElement('button');
     remove.className = 'secondary';
     remove.textContent = 'Remove';
@@ -221,14 +251,15 @@ function displayPreviews(){
       displayPreviews();
     });
 
-    item.append(img,name,remove);
+    item.append(img,name,up,down,remove);
     previewGrid.appendChild(item);
   });
 
   status.textContent = selectedImages.length
-    ? selectedImages.length + ' image(s) selected.'
+    ? selectedImages.length + ' image(s) selected. Arrange images in your preferred PDF order.'
     : '';
 }
+
 
 document.getElementById('clearButton').addEventListener('click',()=>{
   selectedImages = [];
