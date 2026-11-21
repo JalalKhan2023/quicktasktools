@@ -793,48 +793,19 @@ async function removePhotoBackground() {
     );
 
     
-// Refine the AI mask to reduce the background fringe.
-const maskCanvas = document.createElement('canvas');
-maskCanvas.width = cutout.width;
-maskCanvas.height = cutout.height;
+// Apply the original AI mask as a soft alpha mask.
+cutoutCtx.globalCompositeOperation = 'destination-in';
+cutoutCtx.filter = 'blur(0.7px)';
 
-const maskCtx = maskCanvas.getContext('2d');
-
-maskCtx.drawImage(
+cutoutCtx.drawImage(
   mask,
   0,
   0,
-  maskCanvas.width,
-  maskCanvas.height
+  cutout.width,
+  cutout.height
 );
 
-const maskImage = maskCtx.getImageData(
-  0,
-  0,
-  maskCanvas.width,
-  maskCanvas.height
-);
-
-const pixels = maskImage.data;
-
-for (let i = 0; i < pixels.length; i += 4) {
-  let confidence = pixels[i] / 255;
-
-  // Remove weak background pixels and preserve the foreground.
-  let value = (confidence - 0.35) / (0.70 - 0.35);
-  value = Math.max(0, Math.min(1, value));
-
-  // Smooth the transition around the subject's edges.
-  value = value * value * (3 - 2 * value);
-
-  pixels[i + 3] = Math.round(value * 255);
-}
-
-maskCtx.putImageData(maskImage, 0, 0);
-
-// Apply the refined mask to the original photograph.
-cutoutCtx.globalCompositeOperation = 'destination-in';
-cutoutCtx.drawImage(maskCanvas, 0, 0);
+cutoutCtx.filter = 'none';
 cutoutCtx.globalCompositeOperation = 'source-over';
 
 
