@@ -298,11 +298,23 @@ footer a{color:var(--muted);margin:0 8px}
   </select>
  </div>
  <div>
-  <label for="background">Canvas background</label>
-  <select id="background">
-   <option value="white">White</option>
-   <option value="transparent">Transparent (PNG only)</option>
-  </select>
+  
+<label for="background">Choose Background Colour</label>
+<select id="background">
+  <option value="#ffffff">White</option>
+  <option value="#add8e6">Light Blue</option>
+  <option value="#2474d2">Blue</option>
+  <option value="#e53935">Red</option>
+  <option value="#d9d9d9">Light Grey</option>
+  <option value="transparent">Transparent (PNG only)</option>
+  <option value="custom">Custom Colour</option>
+</select>
+
+<div id="customColorBox" style="display:none;margin-top:12px">
+  <label for="customColor">Select Custom Colour</label>
+  <input type="color" id="customColor" value="#00aaff">
+</div>
+
  </div>
 </div>
 
@@ -571,14 +583,22 @@ function drawPhoto(){
  canvas.width=w;
  canvas.height=h;
 
- const background=document.getElementById('background').value;
+ 
+const background=document.getElementById('background').value;
 
- if(background==='white'){
-  ctx.fillStyle='#ffffff';
-  ctx.fillRect(0,0,w,h);
- }else{
+let selectedColor = background;
+
+if(background === 'custom'){
+  selectedColor = document.getElementById('customColor').value;
+}
+
+if(selectedColor === 'transparent'){
   ctx.clearRect(0,0,w,h);
- }
+}else{
+  ctx.fillStyle = selectedColor;
+  ctx.fillRect(0,0,w,h);
+}
+
 
  const zoom=Number(document.getElementById('zoom').value);
  const xPosition=Number(document.getElementById('horizontal').value)/100;
@@ -598,6 +618,23 @@ function drawPhoto(){
  document.getElementById('horizontalValue').textContent=Math.round(xPosition*100)+'%';
  document.getElementById('verticalValue').textContent=Math.round(yPosition*100)+'%';
 }
+
+const backgroundSelect = document.getElementById('background');
+const customColorBox = document.getElementById('customColorBox');
+const customColor = document.getElementById('customColor');
+
+backgroundSelect.addEventListener('change',()=>{
+  customColorBox.style.display =
+    backgroundSelect.value === 'custom' ? 'block' : 'none';
+
+  if(photo) drawPhoto();
+});
+
+customColor.addEventListener('input',()=>{
+  if(photo && backgroundSelect.value === 'custom'){
+    drawPhoto();
+  }
+});
 
 ['zoom','horizontal','vertical','background'].forEach(id=>{
  document.getElementById(id).addEventListener('input',drawPhoto);
