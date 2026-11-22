@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Word to PDF Converter - QuickTaskTools</title>
+<meta name="description" content="Convert Word DOCX documents into PDF files online for free.">
+
+<script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7fb;
+  color:#243047;
+}
+
+header{
+  background:#1769d2;
+  color:white;
+  padding:22px 15px;
+  text-align:center;
+}
+
+header h1{margin:0;font-size:26px}
+header p{margin:8px 0 0}
+
+.container{
+  max-width:900px;
+  margin:30px auto;
+  padding:20px;
+}
+
+.panel{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 3px 15px rgba(0,0,0,.07);
+  margin-bottom:20px;
+}
+
+.upload{
+  border:2px dashed #1769d2;
+  border-radius:10px;
+  padding:30px 15px;
+  text-align:center;
+  background:#f7faff;
+}
+
+input[type=file]{
+  width:100%;
+  padding:10px;
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:12px 20px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.primary{
+  background:#1769d2;
+  color:white;
+  width:100%;
+  margin-top:20px;
+}
+
+.secondary{
+  background:#e8eef7;
+  color:#243047;
+  margin-top:12px;
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.hint{
+  color:#68758a;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.file-info{
+  margin-top:15px;
+  padding:12px;
+  background:#f7faff;
+  border-radius:7px;
+  overflow-wrap:anywhere;
+}
+
+#status{
+  margin-top:15px;
+  text-align:center;
+  font-weight:bold;
+  line-height:1.5;
+}
+
+#previewPanel{display:none}
+
+#documentPreview{
+  background:white;
+  overflow:auto;
+  padding:10px;
+  border:1px solid #dce3ed;
+  border-radius:7px;
+  max-height:650px;
+}
+
+/* Keep rendered document pages readable. */
+#documentPreview .docx-wrapper{
+  background:#e9edf3;
+  padding:12px;
+}
+
+#documentPreview .docx{
+  margin:0 auto 15px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#68758a;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Word to PDF Converter</h1>
+  <p>Convert your Word documents into PDF files for free</p>
+</header>
+
+<main class="container">
+
+<section class="panel">
+
+  <h2>Upload Word Document</h2>
+
+  <p class="hint">
+    Select a Microsoft Word DOCX document from your device.
+  </p>
+
+  <div class="upload">
+    <input
+      type="file"
+      id="wordInput"
+      accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+  </div>
+
+  <div id="fileInfo" class="file-info" style="display:none"></div>
+
+  <button type="button" class="primary" id="convertButton" disabled>
+    Convert Word to PDF
+  </button>
+
+  <div id="status" role="status" aria-live="polite"></div>
+
+</section>
+
+<section class="panel" id="previewPanel">
+  <h2>Document Preview</h2>
+  <p class="hint">
+    Review the rendered document before downloading your PDF.
+  </p>
+
+  <div id="documentPreview"></div>
+</section>
+
+</main>
+
+<footer>
+  © 2026 QuickTaskTools. Free Online Tools.
+</footer>
+
+<script>
+const wordInput = document.getElementById('wordInput');
+const convertButton = document.getElementById('convertButton');
+const fileInfo = document.getElementById('fileInfo');
+const statusBox = document.getElementById('status');
+const previewPanel = document.getElementById('previewPanel');
+const documentPreview = document.getElementById('documentPreview');
+
+let selectedFile = null;
+let busy = false;
+
+wordInput.addEventListener('change', async () => {
+
+  const file = wordInput.files[0];
+
+  if(!file) return;
+
+  if(!file.name.toLowerCase().endsWith('.docx')){
+    statusBox.textContent = 'Please select a DOCX Word document.';
+    wordInput.value = '';
+    return;
+  }
+
+  if(file.size > 20 * 1024 * 1024){
+    statusBox.textContent = 'Please select a document smaller than 20 MB.';
+    wordInput.value = '';
+    return;
+  }
+
+  selectedFile = file;
+  convertButton.disabled = true;
+  previewPanel.style.display = 'none';
+  documentPreview.innerHTML = '';
+
+  fileInfo.style.display = 'block';
+  fileInfo.textContent =
+    'Selected file: ' + file.name +
+    ' | Size: ' + (file.size / 1024).toFixed(1) + ' KB';
+
+  statusBox.textContent = 'Loading and preparing your document...';
+
+  try{
+
+    if(!window.docx || !window.html2pdf){
+      throw new Error('Required conversion libraries could not load. Refresh the page and try again.');
+    }
+
+    const buffer = await file.arrayBuffer();
+
+    await docx.renderAsync(
+      buffer,
+      documentPreview,
+      documentPreview,
+      {
+        className:'docx',
+        inWrapper:true,
+        breakPages:true,
+        ignoreLastRenderedPageBreak:false,
+        renderHeaders:true,
+        renderFooters:true,
+        renderFootnotes:true,
+        renderEndnotes:true
+      }
+    );
+
+    previewPanel.style.display = 'block';
+    convertButton.disabled = false;
+
+    statusBox.textContent =
+      'Document loaded successfully. Review the preview and convert it to PDF.';
+
+  }catch(error){
+
+    console.error(error);
+    selectedFile = null;
+    convertButton.disabled = true;
+    statusBox.textContent = 'Unable to open document: ' + error.message;
+
+  }
+});
+
+convertButton.addEventListener('click', async () => {
+
+  if(!selectedFile || busy) return;
+
+  if(!window.html2pdf){
+    statusBox.textContent = 'PDF conversion library could not load.';
+    return;
+  }
+
+  busy = true;
+  convertButton.disabled = true;
+  statusBox.textContent = 'Creating your PDF. Please wait...';
+
+  try{
+
+    const safeName = selectedFile.name
+      .replace(/\.docx$/i,'')
+      .replace(/[<>:"/\\|?*]/g,'_');
+
+    const options = {
+      margin:0,
+      filename:safeName + '.pdf',
+
+      image:{
+        type:'jpeg',
+        quality:0.98
+      },
+
+      html2canvas:{
+        scale:2,
+        useCORS:true,
+        backgroundColor:'#ffffff',
+        logging:false
+      },
+
+      jsPDF:{
+        unit:'mm',
+        format:'a4',
+        orientation:'portrait'
+      },
+
+      pagebreak:{
+        mode:['css','legacy']
+      }
+    };
+
+    await html2pdf()
+      .set(options)
+      .from(documentPreview)
+      .save();
+
+    statusBox.textContent =
+      'PDF created successfully! Your document has been downloaded.';
+
+  }catch(error){
+
+    console.error(error);
+    statusBox.textContent =
+      'PDF conversion failed: ' + error.message;
+
+  }finally{
+
+    busy = false;
+    convertButton.disabled = false;
+
+  }
+});
+</script>
+
+</body>
+</html>
