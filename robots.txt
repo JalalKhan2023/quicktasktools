@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://quicktasktools.mangalchinar.workers.dev/sitemap.xml
