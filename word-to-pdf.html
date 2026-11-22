@@ -265,6 +265,7 @@ wordInput.addEventListener('change', async () => {
 
   }
 });  
+
 convertButton.addEventListener('click', async () => {
 
   if(!selectedFile || busy) return;
@@ -276,9 +277,16 @@ convertButton.addEventListener('click', async () => {
 
   busy = true;
   convertButton.disabled = true;
-  statusBox.textContent = 'Preparing the complete document for PDF...';
 
-  let exportArea = null;
+  statusBox.textContent = 'Preparing your complete document...';
+
+  // Save the original preview settings.
+  const originalStyles = {
+    maxHeight: documentPreview.style.maxHeight,
+    height: documentPreview.style.height,
+    overflow: documentPreview.style.overflow,
+    width: documentPreview.style.width
+  };
 
   try{
 
@@ -286,76 +294,57 @@ convertButton.addEventListener('click', async () => {
       .replace(/\.docx$/i,'')
       .replace(/[<>:"/\\|?*]/g,'_');
 
-    // Make a separate copy for PDF export.
-    // The original scrollable preview remains unchanged.
-    exportArea = document.createElement('div');
+    // Temporarily expand the actual preview.
+    documentPreview.style.maxHeight = 'none';
+    documentPreview.style.height = 'auto';
+    documentPreview.style.overflow = 'visible';
+    documentPreview.style.width = '100%';
 
-    exportArea.innerHTML = documentPreview.innerHTML;
-
-    Object.assign(exportArea.style,{
-      position:'fixed',
-      left:'-10000px',
-      top:'0',
-      width:documentPreview.scrollWidth + 'px',
-      height:'auto',
-      maxHeight:'none',
-      overflow:'visible',
-      background:'#ffffff',
-      padding:'10px',
-      zIndex:'-1'
-    });
-
-    document.body.appendChild(exportArea);
-
-    // Remove the preview height restriction from the copied content.
-    exportArea.querySelectorAll('*').forEach(element=>{
-      element.style.maxHeight = 'none';
-      element.style.overflow = 'visible';
-    });
-
-    // Keep document pages and tables together where possible.
-    exportArea.querySelectorAll('.docx').forEach(page=>{
-      page.style.breakAfter = 'page';
-      page.style.pageBreakAfter = 'always';
-    });
-
-    statusBox.textContent = 'Creating your complete PDF. Please wait...';
+    // Allow the browser to update the layout.
+    await new Promise(resolve =>
+      requestAnimationFrame(() =>
+        requestAnimationFrame(resolve)
+      )
+    );
 
     const options = {
-      margin:0,
-      filename:safeName + '.pdf',
+      margin: 0,
+      filename: safeName + '.pdf',
 
-      image:{
-        type:'jpeg',
-        quality:0.98
+      image: {
+        type: 'jpeg',
+        quality: 0.98
       },
 
-      html2canvas:{
-        scale:2,
-        useCORS:true,
-        backgroundColor:'#ffffff',
-        logging:false,
-        scrollY:0
+      html2canvas: {
+        scale: 1.5,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        scrollY: 0
       },
 
-      jsPDF:{
-        unit:'mm',
-        format:'a4',
-        orientation:'portrait'
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
       },
 
-      pagebreak:{
-        mode:['css','legacy']
+      pagebreak: {
+        mode: ['css', 'legacy']
       }
     };
 
+    statusBox.textContent =
+      'Creating PDF. Please wait...';
+
     await html2pdf()
       .set(options)
-      .from(exportArea)
+      .from(documentPreview)
       .save();
 
     statusBox.textContent =
-      'PDF created successfully! Your complete document has been downloaded.';
+      'PDF created successfully! Please check the downloaded document.';
 
   }catch(error){
 
@@ -366,15 +355,18 @@ convertButton.addEventListener('click', async () => {
 
   }finally{
 
-    if(exportArea && exportArea.parentNode){
-      exportArea.parentNode.removeChild(exportArea);
-    }
+    // Restore the original preview settings.
+    documentPreview.style.maxHeight = originalStyles.maxHeight;
+    documentPreview.style.height = originalStyles.height;
+    documentPreview.style.overflow = originalStyles.overflow;
+    documentPreview.style.width = originalStyles.width;
 
     busy = false;
     convertButton.disabled = false;
 
   }
 });
+
 
 </script>
 
