@@ -264,11 +264,7 @@ wordInput.addEventListener('change', async () => {
     statusBox.textContent = 'Unable to open document: ' + error.message;
 
   }
-});
-
-convertButton.addEventListener('click', async () => {
-
-  
+});  
 convertButton.addEventListener('click', async () => {
 
   if(!selectedFile || busy) return;
