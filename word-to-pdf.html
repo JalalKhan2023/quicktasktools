@@ -268,6 +268,9 @@ wordInput.addEventListener('change', async () => {
 
 convertButton.addEventListener('click', async () => {
 
+  
+convertButton.addEventListener('click', async () => {
+
   if(!selectedFile || busy) return;
 
   if(!window.html2pdf){
@@ -277,13 +280,50 @@ convertButton.addEventListener('click', async () => {
 
   busy = true;
   convertButton.disabled = true;
-  statusBox.textContent = 'Creating your PDF. Please wait...';
+  statusBox.textContent = 'Preparing the complete document for PDF...';
+
+  let exportArea = null;
 
   try{
 
     const safeName = selectedFile.name
       .replace(/\.docx$/i,'')
       .replace(/[<>:"/\\|?*]/g,'_');
+
+    // Make a separate copy for PDF export.
+    // The original scrollable preview remains unchanged.
+    exportArea = document.createElement('div');
+
+    exportArea.innerHTML = documentPreview.innerHTML;
+
+    Object.assign(exportArea.style,{
+      position:'fixed',
+      left:'-10000px',
+      top:'0',
+      width:documentPreview.scrollWidth + 'px',
+      height:'auto',
+      maxHeight:'none',
+      overflow:'visible',
+      background:'#ffffff',
+      padding:'10px',
+      zIndex:'-1'
+    });
+
+    document.body.appendChild(exportArea);
+
+    // Remove the preview height restriction from the copied content.
+    exportArea.querySelectorAll('*').forEach(element=>{
+      element.style.maxHeight = 'none';
+      element.style.overflow = 'visible';
+    });
+
+    // Keep document pages and tables together where possible.
+    exportArea.querySelectorAll('.docx').forEach(page=>{
+      page.style.breakAfter = 'page';
+      page.style.pageBreakAfter = 'always';
+    });
+
+    statusBox.textContent = 'Creating your complete PDF. Please wait...';
 
     const options = {
       margin:0,
@@ -298,7 +338,8 @@ convertButton.addEventListener('click', async () => {
         scale:2,
         useCORS:true,
         backgroundColor:'#ffffff',
-        logging:false
+        logging:false,
+        scrollY:0
       },
 
       jsPDF:{
@@ -314,25 +355,31 @@ convertButton.addEventListener('click', async () => {
 
     await html2pdf()
       .set(options)
-      .from(documentPreview)
+      .from(exportArea)
       .save();
 
     statusBox.textContent =
-      'PDF created successfully! Your document has been downloaded.';
+      'PDF created successfully! Your complete document has been downloaded.';
 
   }catch(error){
 
     console.error(error);
+
     statusBox.textContent =
       'PDF conversion failed: ' + error.message;
 
   }finally{
+
+    if(exportArea && exportArea.parentNode){
+      exportArea.parentNode.removeChild(exportArea);
+    }
 
     busy = false;
     convertButton.disabled = false;
 
   }
 });
+
 </script>
 
 </body>
